@@ -1,0 +1,55 @@
+-- Digital clock
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity digital_clock is
+    Port (
+        clk      : in  STD_LOGIC;
+        rst      : in  STD_LOGIC;
+        clk_en_1s: in  STD_LOGIC;
+        seconds  : out STD_LOGIC_VECTOR (5 downto 0);
+        minutes  : out STD_LOGIC_VECTOR (5 downto 0);
+        hours    : out STD_LOGIC_VECTOR (4 downto 0)
+    );
+end digital_clock;
+
+architecture behavioral of digital_clock is
+    signal s_seconds : unsigned (5 downto 0) := "000000";
+    signal s_minutes : unsigned (5 downto 0) := "000000";
+    signal s_hours   : unsigned (4 downto 0) := "000000";
+
+begin
+    process (clk, rst)
+    begin
+        if (rst = '1') then
+            s_seconds <= (others => '0');
+            s_minutes <= (others => '0');
+            s_hours   <= (others => '0');
+        elsif (rising_edge(clk)) then
+            if (clk_en_1s = '1') then
+                if (s_seconds = 59) then
+                    s_seconds <= (others => '0');
+                    if (s_minutes = 59) then
+                        s_minutes <= (others => '0');
+                        if (s_hours = 23) then
+                            s_hours <= (others => '0');
+                        else
+                            s_hours <= s_hours + 1;
+                        end if;
+                    else
+                        s_minutes <= s_minutes + 1;
+                    end if;
+                else
+                    s_seconds <= s_seconds + 1;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- Output assignments
+    seconds <= STD_LOGIC_VECTOR(s_seconds);
+    minutes <= STD_LOGIC_VECTOR(s_minutes);
+    hours   <= STD_LOGIC_VECTOR(s_hours);
+
+end behavioral;
