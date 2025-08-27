@@ -1,0 +1,38 @@
+-- Random Number Generator (LFSR)
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity lfsr_rng is
+    Generic (
+        N : natural := 8 -- Width of the LFSR
+    );
+    Port (
+        clk   : in  STD_LOGIC;
+        rst   : in  STD_LOGIC;
+        seed  : in  STD_LOGIC_VECTOR(N-1 downto 0); -- Initial seed for the LFSR
+        enable: in  STD_LOGIC;
+        random_out : out STD_LOGIC_VECTOR(N-1 downto 0)
+    );
+end lfsr_rng;
+
+architecture behavioral of lfsr_rng is
+    signal shift_reg : STD_LOGIC_VECTOR(N-1 downto 0);
+    signal feedback  : STD_LOGIC;
+begin
+    process (clk, rst)
+    begin
+        if (rst = '1') then
+            shift_reg <= seed;
+        elsif (rising_edge(clk)) then
+            if (enable = '1') then
+                -- The feedback polynomial determines the sequence.
+                -- For N=8, we use x^8 + x^4 + x^3 + x^2 + 1
+                feedback <= shift_reg(7) xor shift_reg(3) xor shift_reg(2) xor shift_reg(1);
+                shift_reg <= shift_reg(N-2 downto 0) & feedback;
+            end if;
+        end if;
+    end process;
+
+    random_out <= shift_reg;
+
+end behavioral;
