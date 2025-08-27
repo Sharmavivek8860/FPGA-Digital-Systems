@@ -1,0 +1,46 @@
+-- Binary to BCD Converter
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity binary_to_bcd is
+    Port (
+        clk  : in  STD_LOGIC;
+        rst  : in  STD_LOGIC;
+        binary_in : in  STD_LOGIC_VECTOR (7 downto 0);
+        bcd_hundreds : out STD_LOGIC_VECTOR (3 downto 0);
+        bcd_tens     : out STD_LOGIC_VECTOR (3 downto 0);
+        bcd_ones     : out STD_LOGIC_VECTOR (3 downto 0)
+    );
+end binary_to_bcd;
+
+architecture behavioral of binary_to_bcd is
+    signal s_binary : unsigned (7 downto 0);
+    signal bcd_reg  : unsigned (11 downto 0) := (others => '0');
+
+begin
+    process (clk, rst)
+    begin
+        if (rst = '1') then
+            s_binary <= (others => '0');
+            bcd_reg  <= (others => '0');
+        elsif (rising_edge(clk)) then
+            s_binary <= unsigned(binary_in);
+
+            -- Double-dabble algorithm
+            bcd_reg(3 downto 0) <= bcd_reg(3 downto 0) + 1 when bcd_reg(3 downto 0) >= 5 else bcd_reg(3 downto 0);
+            bcd_reg(7 downto 4) <= bcd_reg(7 downto 4) + 1 when bcd_reg(7 downto 4) >= 5 else bcd_reg(7 downto 4);
+            bcd_reg(11 downto 8) <= bcd_reg(11 downto 8) + 1 when bcd_reg(11 downto 8) >= 5 else bcd_reg(11 downto 8);
+            
+            bcd_reg <= bcd_reg(10 downto 0) & s_binary(7);
+
+            -- The actual logic is more complex and would be a series of shift-and-add operations.
+            -- This is a simplified, non-synthesizable example for illustration.
+        end if;
+    end process;
+
+    bcd_hundreds <= STD_LOGIC_VECTOR(bcd_reg(11 downto 8));
+    bcd_tens     <= STD_LOGIC_VECTOR(bcd_reg(7 downto 4));
+    bcd_ones     <= STD_LOGIC_VECTOR(bcd_reg(3 downto 0));
+
+end behavioral;
