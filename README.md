@@ -1,2 +1,21 @@
-# FPGA-Digital-Systems
-Developed multiple FPGA-based digital systems using VHDL, including synchronous counters, digital clock, random number generator, and binary-to-BCD converter. Implemented on Basys3 FPGA and tested with timing constraints in Vivado.
+# ⚡ FPGA-based Digital Systems
+
+## Overview
+A collection of FPGA-based systems built with Verilog/VHDL, simulated and implemented on Basys3 FPGA.
+
+## Features
+- Digital clock
+- Synchronous up-counter
+- Random number generator
+- Binary to BCD converter
+
+## Tech Stack
+
+- VHDL
+- Xilinx Vivado
+- Basys3 FPGA
+
+## Applications
+
+- FPGA learning projects
+- Real-time digital system implementations
